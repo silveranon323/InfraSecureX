@@ -1,7 +1,5 @@
 # **InfraSecureX: Advanced Network Security & Management Tool**
 
-<img src="https://cdn4.vectorstock.com/i/1000x1000/38/13/network-security-icon-vector-8753813.jpg" alt="InfraSecureX Logo" width="200"/>
-
 **InfraSecureX** is a comprehensive, cutting-edge **Network Security & Management Tool** designed to assist **system administrators**, **IT security professionals**, and **cybersecurity enthusiasts** in securing and managing their networks. It brings together a variety of advanced features such as **network scanning**, **vulnerability assessment**, **malware detection**, and **remote system management** in one tool, making it the ultimate resource for network security operations.
 
 This tool is **educational** in nature and provides hands-on learning experiences, empowering you to enhance your knowledge of modern **network security practices**.
