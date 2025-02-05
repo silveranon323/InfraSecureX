@@ -1,64 +1,60 @@
 # **InfraSecureX: Advanced Network Security & Management Tool**
 
-**InfraSecureX** is a comprehensive, cutting-edge **Network Security & Management Tool** designed to assist **system administrators**, **IT security professionals**, and **cybersecurity enthusiasts** in securing and managing their networks. It brings together a variety of advanced features such as **network scanning**, **vulnerability assessment**, **malware detection**, and **remote system management** in one tool, making it the ultimate resource for network security operations.
+🚀 **InfraSecureX** is a powerful, all-in-one **Network Security & Management Tool** designed for **system administrators, IT security professionals, and cybersecurity enthusiasts**. It simplifies **network scanning, vulnerability assessment, malware detection, and remote system management**, making security operations seamless and efficient.
 
-This tool is **educational** in nature and provides hands-on learning experiences, empowering you to enhance your knowledge of modern **network security practices**.
-
-> ⚠️ **Note:** This tool is intended **strictly for educational purposes**. **Unauthorized use** is **illegal** and **unethical**. Always ensure you have permission to perform any network scanning or management activities.
+> ⚠️ **Disclaimer:** This tool is intended strictly for **educational and authorized use**. Unauthorized use is **illegal and unethical**.
 
 ---
 
 ## **✨ Key Features**
 
-- **🌐 Network Scanning**  
-   Discover all live hosts within a specified IP range using **Nmap**. Effortlessly identify **active systems** and open **ports** across your network.
-   
-- **🔐 SSH Vulnerability Detection**  
-   Secure your network by detecting **weak SSH authentication** mechanisms, ensuring that only authorized users have access.
-   
-- **🦠 Malware Detection**  
-   Scans for **common malware signatures** like **botnets**, **crypto-miners**, and **trojans**, helping detect compromised systems on your network.
-   
-- **🔄 Remote System Reboot**  
-   Take control by sending **remote reboot** commands to systems with **admin privileges**, ensuring systems are reset to a secure state after detection of vulnerabilities.
-   
-- **⚡ Parallel Operations**  
-   Boost efficiency by running operations on **multiple systems simultaneously**, reducing time and manual intervention.
-
-- **🛑 Graceful Interrupt Handling**  
-   Ensures clean termination of operations when interrupted, preserving system stability and preventing unintended background processes.
-
-- **📜 Detailed Log File Generation**  
-   Automatically generates detailed **logs** documenting host discoveries, vulnerabilities detected, malware found, and reboot operations. This makes it easier to track and review actions.
+- 🔍 **Network Scanning** – Identify active hosts, open ports, and network configurations using **Nmap**.  
+- 🛡️ **SSH Vulnerability Detection** – Detect weak SSH authentication mechanisms to prevent unauthorized access.  
+- 🦠 **Malware Detection** – Scan for botnets, crypto-miners, and trojans to ensure system security.  
+- 🔄 **Remote System Reboot** – Secure compromised systems by remotely rebooting them.  
+- ⚡ **Parallel Operations** – Run tasks on multiple systems simultaneously, boosting efficiency.  
+- 🛑 **Graceful Interrupt Handling** – Ensures clean termination of processes, preventing system instability.  
+- 📜 **Detailed Log Generation** – Generates comprehensive security logs for easy tracking and analysis.  
 
 ---
 
-## **🏫 Use Cases for Universities & Colleges**
+## **🎓 Ideal for Universities & IT Training**
 
-InfraSecureX is an ideal solution for **universities**, **colleges**, and **educational institutions** to secure their network infrastructure. It provides a comprehensive tool for monitoring, assessing, and managing the security of academic networks. Some of the key ways in which InfraSecureX can be utilized include:
-
-### **1. Network Security Monitoring**
-Universities can use InfraSecureX to scan their internal networks for vulnerabilities, detect active systems, and identify unauthorized or insecure devices. The tool’s **network scanning** feature helps administrators spot potential threats, ensuring that critical resources are secure.
-
-### **2. Vulnerability Assessment & Mitigation**
-The tool can assist IT administrators in identifying vulnerabilities in their network, such as **weak SSH configurations** and other network weaknesses. By using the **SSH Vulnerability Detection** feature, universities can ensure that only authorized users have access to their systems.
-
-### **3. Malware Detection**
-InfraSecureX scans for malware signatures such as **botnets**, **crypto-miners**, and **trojans**, which could potentially compromise the security of a university’s infrastructure. Universities can quickly identify and isolate infected machines, minimizing damage and downtime.
-
-### **4. Remote System Management**
-With the **remote system reboot** feature, universities can quickly reboot compromised systems to restore them to a secure state, preventing the spread of malware or unauthorized access. The tool's parallel operations ensure that multiple systems can be managed simultaneously, saving time and effort.
-
-### **5. Securing Campus Wi-Fi and Online Resources**
-InfraSecureX can be used to periodically check the campus Wi-Fi network for vulnerabilities. It can help detect unsecured devices and ensure all connected systems are compliant with security standards.
+✔️ **Network Security Monitoring** – Identify vulnerabilities and unauthorized devices on university networks.  
+✔️ **Vulnerability Assessment** – Secure SSH configurations and patch security gaps.  
+✔️ **Malware Detection** – Detect and isolate infected systems efficiently.  
+✔️ **Remote System Management** – Reboot compromised machines instantly.  
+✔️ **Campus Wi-Fi Security** – Ensure compliance with security standards and detect unsecured devices.  
 
 ---
 
 ## **⚙️ Installation Guide**
 
-Get started with **InfraSecureX** in no time with the following steps:
+Get started with **InfraSecureX** in minutes!
 
-### 1. **Clone the Repository**
-Clone the repository to your local machine:
+### 🔽 **1. Clone the Repository**
 ```bash
 git clone https://github.com/yourusername/InfraSecureX.git
+cd InfraSecureX
+```
+
+### 🔧 **2. Install Dependencies**
+```bash
+pip install -r requirements.txt
+```
+
+### ▶ **3. Run InfraSecureX (Shell Tool)**
+```bash
+./infrasecurex.sh
+```
+
+---
+
+## **📖 Documentation & Support**
+
+📌 Check out the **[Wiki](https://github.com/yourusername/InfraSecureX/wiki)** for detailed usage instructions.  
+📩 Need help? Open an **[Issue](https://github.com/yourusername/InfraSecureX/issues)** or join the **community discussions**!  
+
+---
+
+🔐 **Stay Secure. Stay Ahead.** Use **InfraSecureX** responsibly! 🚀
