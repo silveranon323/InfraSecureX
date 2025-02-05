@@ -10,16 +10,21 @@ SSH_PASSWORD=""
 SUDO_USER=""
 SUDO_PASSWORD=""
 
+# Delete existing log file to create a new one on each execution
+if [ -f "$LOG_FILE" ]; then
+  rm "$LOG_FILE"
+fi
+touch "$LOG_FILE"
+
 log_message() {
   echo "$(date "+%Y-%m-%d %H:%M:%S") - $1" >> $LOG_FILE
 }
 
-# Function to display advanced progress bar
+# Function to display a progress bar
 futuristic_progress_bar() {
   local pid=$!
   local delay=0.1
   local width=50
-  local i=0
   local progress=0
 
   while kill -0 $pid 2>/dev/null; do
@@ -33,14 +38,19 @@ futuristic_progress_bar() {
   echo -e "\r[✔] Done"
 }
 
-# Function to execute remote commands with proper sudo handling
+# Function to execute remote commands and display output
 execute_remote_command() {
     local command="$1"
+    local output=""
+
     if [ -n "$SSH_KEY" ]; then
-        ssh -i "$SSH_KEY" "$SSH_USER@$TARGET_IP" "echo '$SUDO_PASSWORD' | sudo -S sh -c '$command'" 2>/dev/null
+        output=$(ssh -i "$SSH_KEY" "$SSH_USER@$TARGET_IP" "echo '$SUDO_PASSWORD' | sudo -S sh -c '$command'" 2>/dev/null)
     else
-        sshpass -p "$SSH_PASSWORD" ssh "$SSH_USER@$TARGET_IP" "echo '$SUDO_PASSWORD' | sudo -S sh -c '$command'" 2>/dev/null
+        output=$(sshpass -p "$SSH_PASSWORD" ssh "$SSH_USER@$TARGET_IP" "echo '$SUDO_PASSWORD' | sudo -S sh -c '$command'" 2>/dev/null)
     fi
+
+    echo "$output"
+    echo "$output" >> "$LOG_FILE"
 }
 
 network_scan() {
@@ -52,76 +62,95 @@ network_scan() {
     echo "$TARGET_IP" > live_hosts.txt
   fi
   futuristic_progress_bar
+  echo -e "\n\033[1;32mLive Hosts Found:\033[0m\n$(cat live_hosts.txt)"
 }
 
 malware_scan() {
   echo -n "Scanning for malware... "
+  local found_malware=""
   while IFS= read -r host; do
     for sig in "${MALWARE_SIGNATURES[@]}"; do
       if [ $((RANDOM % 2)) -eq 0 ]; then
-        log_message "[INFO] Detected $sig on host $host"
+        log_message "[ALERT] Detected $sig on host $host"
+        found_malware="Detected: $sig on $host"
       fi
     done
   done < live_hosts.txt
-  echo " Done"
-  echo -e "\nMalware Scan Completed. System Secure!" >> $LOG_FILE
+  futuristic_progress_bar
+  if [ -z "$found_malware" ]; then
+    echo -e "\n\033[1;32mSystem Secure - No malware found.\033[0m"
+  else
+    echo -e "\n\033[1;31m$found_malware\033[0m"
+  fi
 }
 
 system_update_check() {
   echo -n "Checking for system updates... "
-  execute_remote_command "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y" >> "$LOG_FILE"
+  output=$(execute_remote_command "apt-get update && apt-get -s upgrade | grep '0 upgraded'")
   futuristic_progress_bar
+  if [[ $output == *"0 upgraded"* ]]; then
+    echo -e "\n\033[1;32mSystem is already updated.\033[0m"
+  else
+    echo -e "\n\033[1;33mUpdates available. Consider updating your system.\033[0m"
+  fi
 }
 
 service_check() {
   echo -n "Checking active services... "
-  execute_remote_command "systemctl list-units --type=service --state=running" >> "$LOG_FILE"
+  output=$(execute_remote_command "systemctl list-units --type=service --state=running")
   futuristic_progress_bar
+  echo -e "\n\033[1;32mActive Services:\033[0m\n$output"
 }
 
 disk_space_check() {
   echo -n "Checking disk space... "
-  execute_remote_command "df -h" >> "$LOG_FILE"
+  output=$(execute_remote_command "df -h")
   futuristic_progress_bar
+  echo -e "\n\033[1;32mDisk Space:\033[0m\n$output"
 }
 
 user_activity_check() {
   echo -n "Checking active user sessions... "
-  execute_remote_command "who" >> "$LOG_FILE"
+  output=$(execute_remote_command "who")
   futuristic_progress_bar
+  echo -e "\n\033[1;32mActive Users:\033[0m\n$output"
 }
 
 firewall_check() {
   echo -n "Checking firewall status... "
-  execute_remote_command "ufw status" >> "$LOG_FILE"
+  output=$(execute_remote_command "ufw status")
   futuristic_progress_bar
+  echo -e "\n\033[1;32mFirewall Status:\033[0m\n$output"
 }
 
 process_check() {
   echo -n "Checking running processes... "
-  execute_remote_command "ps aux" >> "$LOG_FILE"
+  output=$(execute_remote_command "ps aux | head -10")
   futuristic_progress_bar
+  echo -e "\n\033[1;32mTop Running Processes:\033[0m\n$output"
 }
 
 cpu_load_check() {
   echo -n "Checking CPU load... "
-  execute_remote_command "top -bn1 | head -n 10" >> "$LOG_FILE"
+  output=$(execute_remote_command "top -bn1 | head -n 10")
   futuristic_progress_bar
+  echo -e "\n\033[1;32mCPU Load:\033[0m\n$output"
 }
 
 backup_check() {
   echo -n "Checking backup status... "
-  execute_remote_command "ls -l /var/backups" >> "$LOG_FILE"
+  output=$(execute_remote_command "ls -l /var/backups")
   futuristic_progress_bar
+  echo -e "\n\033[1;32mBackup Files:\033[0m\n$output"
 }
 
 log_review() {
   echo -n "Reviewing system logs... "
-  execute_remote_command "tail -n 20 /var/log/syslog" >> "$LOG_FILE"
+  output=$(execute_remote_command "tail -n 20 /var/log/syslog")
   futuristic_progress_bar
+  echo -e "\n\033[1;32mSystem Logs:\033[0m\n$output"
 }
 
-# Function to verify sudo access
 verify_sudo_access() {
   echo -n "Verifying sudo access... "
   if [ -n "$SSH_KEY" ]; then
@@ -129,34 +158,20 @@ verify_sudo_access() {
   else
     sshpass -p "$SSH_PASSWORD" ssh "$SSH_USER@$TARGET_IP" "echo '$SUDO_PASSWORD' | sudo -S -v" 2>/dev/null
   fi
-  
+
   if [ $? -eq 0 ]; then
-    echo -e "\033[0;32m[✔] Success!\033[0m"
+    echo -e "\033[1;32m[✔] Success!\033[0m"
     return 0
   else
-    echo -e "\033[0;31m[✘] Failed!\033[0m"
+    echo -e "\033[1;31m[✘] Failed!\033[0m"
     return 1
   fi
 }
 
-# Function to display futuristic spinner animation
-futuristic_spinner() {
-  local pid=$!
-  local delay=0.1
-  local spinner=("⠇" "⠍" "⠉" "⠙" "⠻" "⠿" "⠛" "⠻" "⠿" "⠛")
-  local i=0
-  while kill -0 $pid 2>/dev/null; do
-    echo -n -e "\r[${spinner[$i]}] Processing..."
-    ((i = (i + 1) % 10))
-    sleep $delay
-  done
-  echo -e "\r[✔] Done"
-}
-
 main() {
   echo -e "\033[1;35m[INFO] Starting the InfraSecureX Tool...\033[0m"
-  echo "Time started: $(date "+%Y-%m-%d %H:%M:%S")"
-  echo -e "Target IP Address: \033[0;36m$TARGET_IP\033[0m"
+  START_TIME=$(date "+%Y-%m-%d %H:%M:%S")
+  echo "Time started: $START_TIME"
 
   echo "Select the target system option:"
   echo "1) Single System"
@@ -174,8 +189,8 @@ main() {
 
   read -p "Enter SSH username: " SSH_USER
   read -sp "Enter sudo password: " SUDO_PASSWORD
-  echo  # For newline after password input
-  SUDO_USER="$SSH_USER"  # Using SSH user as sudo user
+  echo  
+  SUDO_USER="$SSH_USER"
 
   echo "Select SSH authentication method:"
   echo "1) SSH Key Authentication"
@@ -186,23 +201,28 @@ main() {
     read -p "Enter SSH key path: " SSH_KEY
   elif [ "$auth_choice" -eq 2 ]; then
     read -sp "Enter SSH password: " SSH_PASSWORD
-    echo  # For newline after password input
+    echo  
   else
     echo "Invalid authentication choice"
     exit 1
   fi
 
-  log_message "[INFO] InfraSecureX tool execution started."
-  
-  echo -e "\nTarget IP: $TARGET_IP\n"
-  log_message "[INFO] Target system: $TARGET_IP"
-
-  # Verify sudo access before proceeding
   if ! verify_sudo_access; then
-    echo "Error: Could not verify sudo access. Please check your credentials."
+    echo "Error: Could not verify sudo access."
     exit 1
   fi
-  
+
+  # Getting target system OS
+  TARGET_OS=$(ssh -i "$SSH_KEY" "$SSH_USER@$TARGET_IP" "uname -s" 2>/dev/null)
+  if [ -z "$TARGET_OS" ]; then
+    TARGET_OS=$(sshpass -p "$SSH_PASSWORD" ssh "$SSH_USER@$TARGET_IP" "uname -s" 2>/dev/null)
+  fi
+
+  echo -e "\033[1;32m[INFO] Target IP: $TARGET_IP\033[0m"
+  echo -e "\033[1;32m[INFO] SSH User: $SSH_USER\033[0m"
+  echo -e "\033[1;32m[INFO] Target System OS: $TARGET_OS\033[0m"
+  echo -e "\033[1;32m[INFO] Start Time: $START_TIME\033[0m"
+
   network_scan
   malware_scan
   system_update_check
@@ -215,7 +235,6 @@ main() {
   backup_check
   log_review
 
-  log_message "[INFO] InfraSecureX tool execution completed."
   echo -e "\033[1;32m[INFO] Execution complete!\033[0m"
 }
 
